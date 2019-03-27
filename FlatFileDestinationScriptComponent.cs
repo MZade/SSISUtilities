@@ -1,3 +1,11 @@
+// =======================
+// Code reuse information
+// =======================
+// The technic to loop therough the columns is based on the souce code that can be found under:
+//     https://gist.github.com/danieljarolim/e89ff5b41b12383c60c7
+//  Thanks for sharing!
+// =======================
+
 #region Help:  Introduction to the Script Component
 /* The Script Component allows you to perform virtually any operation that can be accomplished in
  * a .Net application within the context of an Integration Services data flow.
@@ -17,28 +25,22 @@ using System.Security.Cryptography;
 using System.Text;
 
 using System.IO;
+using System.Globalization;
 #endregion
 
 /// <summary>
 /// This is the class to which to add your code.  Do not change the name, attributes, or parent
 /// of this class.
-///
-/// =======================
-/// Code reuse information
-/// =======================
-/// The technic to loop therough the columns is based on the souce code that can be found under:
-///     https://gist.github.com/danieljarolim/e89ff5b41b12383c60c7
-//  Thanks for sharing!
-/// =======================
-///
 /// </summary>
 [Microsoft.SqlServer.Dts.Pipeline.SSISScriptComponentEntryPointAttribute]
 public class ScriptMain : UserComponent
 {
+    
     private Encoding TextEncoding = System.Text.UTF8Encoding.UTF8;
     private const string ColumnDelimiter = ";";
     private const string TextQualifier = "\"";
     private const string TextQualifierEscape = "\"\"";
+    private const string DateTimeFormatPattern = "yyyy-MM-dd HH:mm:ss";
 
     private class ColumnClass
     {
@@ -123,7 +125,16 @@ public class ScriptMain : UserComponent
          
         if (fieldContent != null)
         {
-            data += Convert.ToString(fieldContent).Replace(TextQualifier, TextQualifierEscape);
+            if (fieldContent is DateTime)
+            {
+                DateTime dt = (DateTime)fieldContent;
+                data += dt.ToString(DateTimeFormatPattern);
+            }
+            else
+            {
+                data += Convert.ToString(fieldContent).Replace(TextQualifier, TextQualifierEscape);
+            }
+            
         }
 
         data += TextQualifier;
@@ -168,7 +179,7 @@ public class ScriptMain : UserComponent
         base.PreExecute();
         /*
          * Add your code here
-         */
+         */        
         textWriter = new StreamWriter(destination, this.Variables.varIsAppendMode, TextEncoding);
 
         ColumnCount = ComponentMetaData.InputCollection[0].InputColumnCollection.Count;
