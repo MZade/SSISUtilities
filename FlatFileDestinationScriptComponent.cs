@@ -22,6 +22,15 @@ using System.IO;
 /// <summary>
 /// This is the class to which to add your code.  Do not change the name, attributes, or parent
 /// of this class.
+///
+/// =======================
+/// Code reuse information
+/// =======================
+/// The technic to loop therough the columns is based on the souce code that can be found under:
+///     https://gist.github.com/danieljarolim/e89ff5b41b12383c60c7
+//  Thanks for sharing!
+/// =======================
+///
 /// </summary>
 [Microsoft.SqlServer.Dts.Pipeline.SSISScriptComponentEntryPointAttribute]
 public class ScriptMain : UserComponent
